@@ -4,18 +4,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.ValidationException;
+
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.WebRequest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.upday.news.error.ErrorDetails;
 import com.upday.news.model.Article;
 import com.upday.news.model.ArticleRepository;
 
@@ -39,6 +47,7 @@ public class ArticleController {
         return articleRepository.insert(article);
     }
 
+    @ApiMethod(description = "This method updates an existing article.")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public Article update(@RequestBody Article article) {
 
@@ -87,6 +96,30 @@ public class ArticleController {
     public List<Article> findByKeyword(@ApiQueryParam(description = "The keyword to look for.", name = "keyword")
                                        @RequestParam String keyword) {
         return articleRepository.findByKeywords(keyword);
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorDetails> handleInputValidationException(ValidationException ex, WebRequest request) {
+
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setTimestamp(new Date());
+        errorDetails.setMessage(ex.getMessage());
+        errorDetails.setDetails("The given data is incomplete or invalid.");
+        errorDetails.setPath(request.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(JsonProcessingException.class)
+    public ResponseEntity<ErrorDetails> handleJsonSyntaxException(JsonProcessingException ex, WebRequest request) {
+
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setTimestamp(new Date());
+        errorDetails.setMessage(ex.getMessage());
+        errorDetails.setDetails("The given data is no valid Json.");
+        errorDetails.setPath(request.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
 }

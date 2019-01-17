@@ -39,7 +39,7 @@ public class Article {
     String shortDescription;
 
     @NotBlank
-    @ApiObjectField(description = "A article / content itself.", required = true)
+    @ApiObjectField(description = "The article / content itself.", required = true)
     String text;
 
     @NotNull(message = "The publish date must be set.")

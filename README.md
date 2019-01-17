@@ -10,8 +10,7 @@ start springboot:           mvn spring-boot:run
 TODO:
 
 - Integration test controller
-- define return value / message in case of error
-- include jondoc for easy trial / manual testing and showing
+- define return value / message in case of error (Exception per controller)
 -
 
 

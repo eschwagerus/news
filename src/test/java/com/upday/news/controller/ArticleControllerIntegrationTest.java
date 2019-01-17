@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -45,6 +46,39 @@ public class ArticleControllerIntegrationTest {
                 post("/article/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(article))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header").value("header1111"));
     }
+
+    @Test
+    public void createArticle_incompleteData() throws Exception {
+
+        // prepare
+        String invalidArticle = "{\n" +
+                "    \"shortDescription\": \"A short description of the article\",\n" +
+                "    \"text\": \"Here it comes - the actual article\",\n" +
+                "    \"publishDate\": 1547733791804,\n" +
+                "    \"authors\": [\n" +
+                "        \"author1\",\n" +
+                "        \"author2\",\n" +
+                "        \"author3\"\n" +
+                "    ],\n" +
+                "    \"keywords\": [\n" +
+                "        \"keyword1\",\n" +
+                "        \"keyword2\"\n" +
+                "    ]\n" +
+                "}";
+
+        // test and verify
+        mockMvc.perform(
+                post("/article/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidArticle))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("header: The header must not be blank."))
+                .andExpect(jsonPath("$.details")
+                        .value("The given data is incomplete or invalid."));
+    }
+
 }
