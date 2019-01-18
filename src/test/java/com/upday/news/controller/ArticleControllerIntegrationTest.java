@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -82,6 +83,20 @@ public class ArticleControllerIntegrationTest {
                         .value("header: The header must not be blank."))
                 .andExpect(jsonPath("$.details")
                         .value("The given data is incomplete or invalid."));
+    }
+
+    @Test
+    public void displayArticle_notFound() throws Exception {
+
+        // prepare
+
+        // test and verify
+        mockMvc.perform(
+                get("/article/display")
+                        .param("articleId", "1234567890ABCDEFG"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.details")
+                        .value("No article with this id found in database."));
     }
 
 }

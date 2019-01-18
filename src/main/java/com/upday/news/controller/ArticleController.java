@@ -7,6 +7,8 @@ import java.util.Optional;
 import javax.validation.ValidationException;
 
 import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiError;
+import org.jsondoc.core.annotation.ApiErrors;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.slf4j.Logger;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.upday.news.error.ArticleNotFoundException;
 import com.upday.news.error.ErrorDetails;
 import com.upday.news.model.Article;
 import com.upday.news.model.ArticleRepository;
@@ -40,6 +43,10 @@ public class ArticleController {
     @ApiMethod(description = "This method stores a new article in the database." +
             "The newly created article is returned on success. " +
             "Note that the result contains the generated articleId.")
+    @ApiErrors(apierrors = {
+            @ApiError(code = "400 - Bad Request", description = "The given article is incomplete or invalid. E.g. missing field."),
+            @ApiError(code = "400 - Bad Request", description = "The given article json has a syntax error.")
+    })
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public Article create(@RequestBody Article article) {
 
@@ -48,6 +55,10 @@ public class ArticleController {
     }
 
     @ApiMethod(description = "This method updates an existing article. Identifier is the articleId.")
+    @ApiErrors(apierrors = {
+            @ApiError(code = "400 - Bad Request", description = "The given article is incomplete or invalid. E.g. missing field."),
+            @ApiError(code = "400 - Bad Request", description = "The given article json has a syntax error.")
+    })
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public Article update(@RequestBody Article article) {
 
@@ -56,6 +67,9 @@ public class ArticleController {
     }
 
     @ApiMethod(description = "This method deletes an existing article.")
+    @ApiErrors(apierrors = {
+            @ApiError(code = "404 - Not Found", description = "The requested article was not found.")
+    })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String delete(@ApiQueryParam(description = "The id of the article to display.", name = "articleId")
                          @RequestParam
@@ -67,6 +81,9 @@ public class ArticleController {
     }
 
     @ApiMethod(description = "This method shows all details of a certain article.")
+    @ApiErrors(apierrors = {
+            @ApiError(code = "404 - Not Found", description = "The requested article was not found.")
+    })
     @RequestMapping(value = "/display", method = RequestMethod.GET)
     public Article display(@ApiQueryParam(description = "The id of the article to display.", name = "articleId")
                            @RequestParam
@@ -77,20 +94,26 @@ public class ArticleController {
             log.debug("Displaying article: %", articleById.get());
             return articleById.get();
         } else {
-            // TODO: return 404 / message
-            return new Article();
+            throw new ArticleNotFoundException("ArticleId not found in DB: " + articleId);
         }
     }
 
     @ApiMethod(description = "This method returns all articles for this author.")
     @RequestMapping(value = "/listForAuthor", method = RequestMethod.GET)
     public List<Article> listForAuthor(@ApiQueryParam(description = "The name of the author.", name = "author")
-                                       @RequestParam String author) {
+                                       @RequestParam
+                                       String author) {
         return articleRepository.findByAuthors(author);
     }
 
+    @ApiMethod(description = "This method returns all articles for this author.")
     @RequestMapping(value = "/listForPeriod", method = RequestMethod.GET)
-    public List<Article> listForPeriod(Date from, Date to) {
+    public List<Article> listForPeriod(@ApiQueryParam(description = "Startdate of period, included.", name = "from")
+                                       @RequestParam
+                                       Date from,
+                                       @ApiQueryParam(description = "Enddate of period, excluded.", name = "to")
+                                       @RequestParam
+                                       Date to) {
         return articleRepository.findByPublishDateBetween(from, to);
     }
 
@@ -101,6 +124,14 @@ public class ArticleController {
         return articleRepository.findByKeywords(keyword);
     }
 
+    /**
+     * An ExceptionHandler for this controller. All validation Exceptions will return a simplified ErrorDetails
+     * message. HTTP status code is 400 - Bad request.
+     *
+     * @param ex      the thrown Exception
+     * @param request information on the original request
+     * @return ErrorDetails as json String
+     */
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorDetails> handleInputValidationException(ValidationException ex, WebRequest request) {
 
@@ -113,6 +144,14 @@ public class ArticleController {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * An ExceptionHandler for this controller. All validation JsonProcessingException will return a simplified
+     * ErrorDetails message. HTTP status code is 400 - Bad request.
+     *
+     * @param ex      the thrown Exception
+     * @param request information on the original request
+     * @return ErrorDetails as json String
+     */
     @ExceptionHandler(JsonProcessingException.class)
     public ResponseEntity<ErrorDetails> handleJsonSyntaxException(JsonProcessingException ex, WebRequest request) {
 
@@ -123,6 +162,18 @@ public class ArticleController {
         errorDetails.setPath(request.getDescription(false));
 
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ArticleNotFoundException.class)
+    public ResponseEntity<ErrorDetails> handleArticleNotFoundException(ArticleNotFoundException ex, WebRequest request) {
+
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setTimestamp(new Date());
+        errorDetails.setMessage(ex.getMessage());
+        errorDetails.setDetails("No article with this id found in database.");
+        errorDetails.setPath(request.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
 }
