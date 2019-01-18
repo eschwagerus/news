@@ -46,8 +46,7 @@ public class ArticleService {
         Optional<Article> currentArticle = articleRepository.findById(article.getArticleId());
 
         if (currentArticle.isPresent()) {
-            articleRepository.save(currentArticle.get());
-            return currentArticle.get();
+            return articleRepository.save(article);
         } else {
             throw new ArticleNotFoundException(("The article was not found and therefore not be deleted: ")
                     + article.getArticleId());

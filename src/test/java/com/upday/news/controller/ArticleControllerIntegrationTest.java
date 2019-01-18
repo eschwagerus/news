@@ -1,5 +1,6 @@
 package com.upday.news.controller;
 
+import org.bson.Document;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,7 +28,7 @@ public class ArticleControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @Test
-    public void createArticle() throws Exception {
+    public void createUpdateDeleteArticle() throws Exception {
 
         // prepare
         String article = "{\n" +
@@ -46,12 +48,44 @@ public class ArticleControllerIntegrationTest {
                 "}";
 
         // test and verify
-        mockMvc.perform(
+        ResultActions createdArticleResult = mockMvc.perform(
                 post("/article/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(article))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.header").value("header1111"));
+
+        String articleId = Document.parse(createdArticleResult.andReturn()
+                .getResponse().getContentAsString()).get("articleId").toString();
+        String articleUpdate = "{\n" +
+                "    \"articleId\": \"" + articleId + "\",\n" +
+                "    \"header\": \"header3333\",\n" +
+                "    \"shortDescription\": \"A short description of the article\",\n" +
+                "    \"text\": \"Here it comes - the actual article\",\n" +
+                "    \"publishDate\": 1547733791804,\n" +
+                "    \"authors\": [\n" +
+                "        \"author1\",\n" +
+                "        \"author2\",\n" +
+                "        \"author3\"\n" +
+                "    ],\n" +
+                "    \"keywords\": [\n" +
+                "        \"keyword1\",\n" +
+                "        \"keyword2\"\n" +
+                "    ]\n" +
+                "}";
+
+        mockMvc.perform(
+                post("/article/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(articleUpdate))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header").value("header3333"));
+
+        mockMvc.perform(
+                post("/article/delete")
+                        .param("articleId", articleId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header").value("header3333"));
     }
 
     @Test
@@ -98,5 +132,21 @@ public class ArticleControllerIntegrationTest {
                 .andExpect(jsonPath("$.details")
                         .value("No article with this id found in database."));
     }
+
+    @Test
+    public void listForAuthor() throws Exception {
+        // TODO:
+    }
+
+    @Test
+    public void listForPeriod() {
+        // TODO:
+    }
+
+    @Test
+    public void listForKeyword() {
+        // TODO:
+    }
+
 
 }
