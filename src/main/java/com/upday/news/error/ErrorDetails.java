@@ -2,7 +2,9 @@ package com.upday.news.error;
 
 import java.util.Date;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * This class contains information returned by tha API in case of an Exception.
@@ -11,6 +13,8 @@ import lombok.Data;
  * No technical details like stacktraces should be included.
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ErrorDetails {
 
     /**

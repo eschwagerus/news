@@ -2,7 +2,6 @@ package com.upday.news.controller;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.ValidationException;
 
@@ -28,7 +27,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.upday.news.error.ArticleNotFoundException;
 import com.upday.news.error.ErrorDetails;
 import com.upday.news.model.Article;
-import com.upday.news.model.ArticleRepository;
+import com.upday.news.service.ArticleService;
 
 @RestController
 @RequestMapping(value = "/article")
@@ -38,7 +37,7 @@ public class ArticleController {
     private Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    ArticleRepository articleRepository;
+    private ArticleService articleService;
 
     @ApiMethod(description = "This method stores a new article in the database."
             + "The newly created article is returned on success. "
@@ -51,7 +50,7 @@ public class ArticleController {
     public Article create(@RequestBody Article article) {
 
         log.debug("Creating new article: %", article);
-        return articleRepository.insert(article);
+        return articleService.create(article);
     }
 
     @ApiMethod(description = "This method updates an existing article. Identifier is the articleId.")
@@ -63,7 +62,7 @@ public class ArticleController {
     public Article update(@RequestBody Article article) {
 
         log.debug("Updating existing article: %", article);
-        return articleRepository.save(article);
+        return articleService.update(article);
     }
 
     @ApiMethod(description = "This method deletes an existing article.")
@@ -71,13 +70,12 @@ public class ArticleController {
             @ApiError(code = "404 - Not Found", description = "The requested article was not found.")
     })
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public String delete(@ApiQueryParam(description = "The id of the article to display.", name = "articleId")
-                         @RequestParam
-                         String articleId) {
+    public Article delete(@ApiQueryParam(description = "The id of the article to delete.", name = "articleId")
+                          @RequestParam
+                          String articleId) {
 
         log.debug("Deleting existing article: %", articleId);
-        articleRepository.deleteById(articleId);
-        return "";
+        return articleService.delete(articleId);
     }
 
     @ApiMethod(description = "This method shows all details of a certain article.")
@@ -89,13 +87,8 @@ public class ArticleController {
                            @RequestParam
                            String articleId) {
 
-        Optional<Article> articleById = articleRepository.findById(articleId);
-        if (articleById.isPresent()) {
-            log.debug("Displaying article: %", articleById.get());
-            return articleById.get();
-        } else {
-            throw new ArticleNotFoundException("ArticleId not found in DB: " + articleId);
-        }
+        log.debug("Displaying article with id: %", articleId);
+        return articleService.findById(articleId);
     }
 
     @ApiMethod(description = "This method returns all articles for this author.")
@@ -103,7 +96,9 @@ public class ArticleController {
     public List<Article> listForAuthor(@ApiQueryParam(description = "The name of the author.", name = "author")
                                        @RequestParam
                                        String author) {
-        return articleRepository.findByAuthors(author);
+
+        log.debug("Listing articles for author %", author);
+        return articleService.findByAuthor(author);
     }
 
     @ApiMethod(description = "This method returns all articles for this author.")
@@ -114,14 +109,14 @@ public class ArticleController {
                                        @ApiQueryParam(description = "Enddate of period, excluded.", name = "to")
                                        @RequestParam
                                        Date to) {
-        return articleRepository.findByPublishDateBetween(from, to);
+        return articleService.findByPublishDateBetween(from, to);
     }
 
     @ApiMethod(description = "This method returns all articles with a certain keyword.")
     @RequestMapping(value = "/findByKeyword", method = RequestMethod.GET)
     public List<Article> findByKeyword(@ApiQueryParam(description = "The keyword to look for.", name = "keyword")
                                        @RequestParam String keyword) {
-        return articleRepository.findByKeywords(keyword);
+        return articleService.findByKeyword(keyword);
     }
 
     /**
@@ -135,13 +130,12 @@ public class ArticleController {
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorDetails> handleInputValidationException(ValidationException ex, WebRequest request) {
 
-        ErrorDetails errorDetails = new ErrorDetails();
-        errorDetails.setTimestamp(new Date());
-        errorDetails.setMessage(ex.getMessage());
-        errorDetails.setDetails("The given data is incomplete or invalid.");
-        errorDetails.setPath(request.getDescription(false));
-
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorDetails(
+                new Date(),
+                ex.getMessage(),
+                "The given data is incomplete or invalid.",
+                request.getDescription(false)),
+                HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -155,25 +149,23 @@ public class ArticleController {
     @ExceptionHandler(JsonProcessingException.class)
     public ResponseEntity<ErrorDetails> handleJsonSyntaxException(JsonProcessingException ex, WebRequest request) {
 
-        ErrorDetails errorDetails = new ErrorDetails();
-        errorDetails.setTimestamp(new Date());
-        errorDetails.setMessage(ex.getMessage());
-        errorDetails.setDetails("The given data is no valid Json.");
-        errorDetails.setPath(request.getDescription(false));
-
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorDetails(
+                new Date(),
+                ex.getMessage(),
+                "The given data is no valid Json.",
+                request.getDescription(false)),
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ArticleNotFoundException.class)
     public ResponseEntity<ErrorDetails> handleArticleNotFoundException(ArticleNotFoundException ex, WebRequest request) {
 
-        ErrorDetails errorDetails = new ErrorDetails();
-        errorDetails.setTimestamp(new Date());
-        errorDetails.setMessage(ex.getMessage());
-        errorDetails.setDetails("No article with this id found in database.");
-        errorDetails.setPath(request.getDescription(false));
-
-        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorDetails(
+                new Date(),
+                ex.getMessage(),
+                "No article with this id found in database.",
+                request.getDescription(false)),
+                HttpStatus.NOT_FOUND);
     }
 
 }
