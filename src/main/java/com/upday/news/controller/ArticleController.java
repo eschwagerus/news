@@ -40,9 +40,9 @@ public class ArticleController {
     @Autowired
     ArticleRepository articleRepository;
 
-    @ApiMethod(description = "This method stores a new article in the database." +
-            "The newly created article is returned on success. " +
-            "Note that the result contains the generated articleId.")
+    @ApiMethod(description = "This method stores a new article in the database."
+            + "The newly created article is returned on success. "
+            + "Note that the result contains the generated articleId.")
     @ApiErrors(apierrors = {
             @ApiError(code = "400 - Bad Request", description = "The given article is incomplete or invalid. E.g. missing field."),
             @ApiError(code = "400 - Bad Request", description = "The given article json has a syntax error.")

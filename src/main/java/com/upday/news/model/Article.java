@@ -17,6 +17,9 @@ import org.jsondoc.core.annotation.ApiObjectField;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * The main data structure of an article.
+ */
 @Document
 @Getter
 @Setter
@@ -28,29 +31,29 @@ public class Article {
 
     @Id
     @ApiObjectField(description = "The unique identifier of an article. Generated automatically by db - do not set!.")
-    String articleId;
+    private String articleId;
 
     @NotBlank(message = "The header must not be blank.")
     @ApiObjectField(description = "The header of the article.", required = true)
-    String header;
+    private String header;
 
     @NotBlank(message = "The short description must not be blank.")
     @ApiObjectField(description = "A short text describing the article.", required = true)
-    String shortDescription;
+    private String shortDescription;
 
     @NotBlank
     @ApiObjectField(description = "The article / content itself.", required = true)
-    String text;
+    private String text;
 
     @NotNull(message = "The publish date must be set.")
     @ApiObjectField(description = "The publishDate of the article.", required = true)
-    Date publishDate;
+    private Date publishDate;
 
     @NotEmpty(message = "At least one author must be set.")
     @ApiObjectField(description = "A list of authors. At least one must be set.", required = true)
-    List<String> authors;
+    private List<String> authors;
 
     @NotEmpty(message = "At least one keyword must be set.")
     @ApiObjectField(description = "A list of keywords for this article. At least one must be set", required = true)
-    List<String> keywords;
+    private List<String> keywords;
 }

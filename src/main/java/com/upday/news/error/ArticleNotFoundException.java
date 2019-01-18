@@ -5,6 +5,10 @@ package com.upday.news.error;
  */
 public class ArticleNotFoundException extends RuntimeException {
 
+    /**
+     * Constructor.
+     * @param message a meaningful message about the Exception
+     */
     public ArticleNotFoundException(String message) {
         super(message);
     }
