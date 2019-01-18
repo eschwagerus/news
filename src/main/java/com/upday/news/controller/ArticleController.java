@@ -47,7 +47,7 @@ public class ArticleController {
         return articleRepository.insert(article);
     }
 
-    @ApiMethod(description = "This method updates an existing article.")
+    @ApiMethod(description = "This method updates an existing article. Identifier is the articleId.")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public Article update(@RequestBody Article article) {
 
@@ -55,8 +55,11 @@ public class ArticleController {
         return articleRepository.save(article);
     }
 
+    @ApiMethod(description = "This method deletes an existing article.")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public String delete(String articleId) {
+    public String delete(@ApiQueryParam(description = "The id of the article to display.", name = "articleId")
+                         @RequestParam
+                         String articleId) {
 
         log.debug("Deleting existing article: %", articleId);
         articleRepository.deleteById(articleId);

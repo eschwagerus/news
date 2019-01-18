@@ -16,6 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ * This collection of tests verifies the behaviour of the article repository which
+ * includes all data access methods for articles (CRUD & additional finder methods)
+ */
 @RunWith(SpringRunner.class)
 @DataMongoTest
 public class ArticleRepositoryIntegrationTest {
@@ -23,12 +27,18 @@ public class ArticleRepositoryIntegrationTest {
     @Autowired
     ArticleRepository articleRepository;
 
+    /**
+     * This method removes all data from the storage before each test is executed.
+     */
     @Before
     public void clearRepository() {
 
         articleRepository.deleteAll();
     }
 
+    /**
+     * This test creates a valid article.
+     */
     @Test
     public void createArticle_success() {
 
@@ -44,6 +54,10 @@ public class ArticleRepositoryIntegrationTest {
         Assert.assertEquals(1, articleRepository.count());
     }
 
+    /**
+     * This test verifies, that incomplete data is not stored (no authors) and
+     * a meaningful response is given.
+     */
     @Test
     public void createArticle_failureNoAuthor() {
 
@@ -61,6 +75,9 @@ public class ArticleRepositoryIntegrationTest {
         }
     }
 
+    /**
+     * This test first stores an article and then reads it again from the db.
+     */
     @Test
     public void updateAndGetArticle_success() {
 
@@ -77,6 +94,9 @@ public class ArticleRepositoryIntegrationTest {
         Assert.assertEquals(article, articleById);
     }
 
+    /**
+     * This test first stores an article and deletes it in the next step.
+     */
     @Test
     public void createAndDeleteArticle_success() {
 
@@ -93,6 +113,9 @@ public class ArticleRepositoryIntegrationTest {
         Assert.assertEquals(0, articleRepository.count());
     }
 
+    /**
+     * This test checks the findByAuthor method.
+     */
     @Test
     public void findArticleByAuthor_success() {
 
@@ -108,6 +131,9 @@ public class ArticleRepositoryIntegrationTest {
         Assert.assertEquals(2, articlesOfAuthor.size());
     }
 
+    /**
+     * This test checks the findByKeywords method.
+     */
     @Test
     public void findArticleByKeyword_success() {
 
@@ -123,6 +149,9 @@ public class ArticleRepositoryIntegrationTest {
         Assert.assertEquals(2, articlesOfAuthor.size());
     }
 
+    /**
+     * This test creates some dummy articles and verifies the findByPublishDate method.
+     */
     @Test
     public void findByPublishDate_success() {
 
@@ -148,6 +177,12 @@ public class ArticleRepositoryIntegrationTest {
         Assert.assertEquals(2, articlesByPublishDate.size());
     }
 
+    /**
+     * A simple helper method to create a dummy article.
+     *
+     * @param index an index added to each field so you can distinguish the objects
+     * @return a valid article
+     */
     private Article createIndexedDummyArticle(Long index) {
 
         Article article = new Article();
