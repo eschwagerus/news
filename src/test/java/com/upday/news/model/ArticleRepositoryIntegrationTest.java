@@ -32,7 +32,6 @@ public class ArticleRepositoryIntegrationTest {
      */
     @Before
     public void clearRepository() {
-
         articleRepository.deleteAll();
     }
 

@@ -1,6 +1,10 @@
 package com.upday.news.controller;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.bson.Document;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+
+import com.upday.news.model.ArticleRepository;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,6 +32,17 @@ public class ArticleControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    ArticleRepository articleRepository;
+
+    /**
+     * This method removes all data from the storage before each test is executed.
+     */
+    @Before
+    public void clearRepository() {
+        articleRepository.deleteAll();
+    }
 
     @Test
     public void createUpdateDeleteArticle() throws Exception {
@@ -135,18 +152,139 @@ public class ArticleControllerIntegrationTest {
 
     @Test
     public void listForAuthor() throws Exception {
-        // TODO:
+
+        // prepare
+        generateSomeTestData();
+
+        // test and verify
+        mockMvc.perform(
+                get("/article/listForAuthor")
+                        .param("author", "author6"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()")
+                        .value(3));
     }
 
     @Test
-    public void listForPeriod() {
-        // TODO:
+    public void listForPeriod() throws Exception {
+
+        // prepare
+        generateSomeTestData();
+
+        // test and verify
+        mockMvc.perform(
+                get("/article/listForPeriod")
+                        .param("from", "1547078400000")
+                        .param("to", "1547424000000"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()")
+                        .value(3));
     }
 
     @Test
-    public void listForKeyword() {
-        // TODO:
+    public void listForKeyword() throws Exception {
+
+        // prepare
+        generateSomeTestData();
+
+        // test and verify
+        mockMvc.perform(
+                get("/article/findByKeyword")
+                        .param("keyword", "keywordx"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()")
+                        .value(3));
     }
 
+    private void generateSomeTestData() throws Exception {
+
+        List<String> articles = Arrays.asList(
+                "{\n" +
+                        "    \"header\": \"header1111\",\n" +
+                        "    \"shortDescription\": \"A short description of the article\",\n" +
+                        "    \"text\": \"Here it comes - the actual article\",\n" +
+                        "    \"publishDate\": 1547078400000,\n" +
+                        "    \"authors\": [\n" +
+                        "        \"author1\",\n" +
+                        "        \"author2\",\n" +
+                        "        \"author6\"\n" +
+                        "    ],\n" +
+                        "    \"keywords\": [\n" +
+                        "        \"keyword1\",\n" +
+                        "        \"keywordx\"\n" +
+                        "    ]\n" +
+                        "}",
+                "{\n" +
+                        "    \"header\": \"header2222\",\n" +
+                        "    \"shortDescription\": \"A short description of the article\",\n" +
+                        "    \"text\": \"Here it comes - the actual article\",\n" +
+                        "    \"publishDate\": 1547164800000,\n" +
+                        "    \"authors\": [\n" +
+                        "        \"author1\",\n" +
+                        "        \"author2\",\n" +
+                        "        \"author6\"\n" +
+                        "    ],\n" +
+                        "    \"keywords\": [\n" +
+                        "        \"keyword1\",\n" +
+                        "        \"keywordx\"\n" +
+                        "    ]\n" +
+                        "}",
+                "{\n" +
+                        "    \"header\": \"header3333\",\n" +
+                        "    \"shortDescription\": \"A short description of the article\",\n" +
+                        "    \"text\": \"Here it comes - the actual article\",\n" +
+                        "    \"publishDate\": 1547251200000,\n" +
+                        "    \"authors\": [\n" +
+                        "        \"author1\",\n" +
+                        "        \"author2\",\n" +
+                        "        \"author3\"\n" +
+                        "    ],\n" +
+                        "    \"keywords\": [\n" +
+                        "        \"keyword1\",\n" +
+                        "        \"keyword2\"\n" +
+                        "    ]\n" +
+                        "}",
+                "{\n" +
+                        "    \"header\": \"header4444\",\n" +
+                        "    \"shortDescription\": \"A short description of the article\",\n" +
+                        "    \"text\": \"Here it comes - the actual article\",\n" +
+                        "    \"publishDate\": 1547337600000,\n" +
+                        "    \"authors\": [\n" +
+                        "        \"author1\",\n" +
+                        "        \"author2\",\n" +
+                        "        \"author6\"\n" +
+                        "    ],\n" +
+                        "    \"keywords\": [\n" +
+                        "        \"keyword1\",\n" +
+                        "        \"keyword2\"\n" +
+                        "    ]\n" +
+                        "}",
+                "{\n" +
+                        "    \"header\": \"header5555\",\n" +
+                        "    \"shortDescription\": \"A short description of the article\",\n" +
+                        "    \"text\": \"Here it comes - the actual article\",\n" +
+                        "    \"publishDate\": 1547424000000,\n" +
+                        "    \"authors\": [\n" +
+                        "        \"author1\",\n" +
+                        "        \"author2\",\n" +
+                        "        \"author3\"\n" +
+                        "    ],\n" +
+                        "    \"keywords\": [\n" +
+                        "        \"keyword1\",\n" +
+                        "        \"keywordx\"\n" +
+                        "    ]\n" +
+                        "}"
+        );
+
+        articles.forEach(article -> {
+            try {
+                mockMvc.perform(
+                        post("/article/create")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(article));
+            } catch (Exception e) {
+            }
+        });
+    }
 
 }

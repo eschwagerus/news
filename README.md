@@ -13,6 +13,7 @@
 * build the app:              mvn clean install
 * run the integration tests:  mvn clean verify
 * start springboot:           mvn spring-boot:run
+* generate jacoco report:     mvn jacoco:report             (see /target/site/jacoco/...)
 
 When the app is started, open your browser at http://localhost:8080/jsondoc-ui.html?url=jsondoc
 The actual API documentation can be found here!
@@ -22,4 +23,3 @@ The actual API documentation can be found here!
 * The app has no access control or security features / personalized user behaviour
 * The data structure is kept very simple and document oriented
 * There is no form of caching activated - which would be essential for high traffic to deal with
-

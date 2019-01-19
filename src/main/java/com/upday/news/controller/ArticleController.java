@@ -105,11 +105,11 @@ public class ArticleController {
     @RequestMapping(value = "/listForPeriod", method = RequestMethod.GET)
     public List<Article> listForPeriod(@ApiQueryParam(description = "Startdate of period, included.", name = "from")
                                        @RequestParam
-                                       Date from,
+                                       Long from,
                                        @ApiQueryParam(description = "Enddate of period, excluded.", name = "to")
                                        @RequestParam
-                                       Date to) {
-        return articleService.findByPublishDateBetween(from, to);
+                                       Long to) {
+        return articleService.findByPublishDateBetween(new Date(from), new Date(to));
     }
 
     @ApiMethod(description = "This method returns all articles with a certain keyword.")
