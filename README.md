@@ -1,5 +1,10 @@
 # Upday Java Backend Assignment (news/articles)
 
+This module implements the assigned backend tasks:
+
+* algorithm: Flatten an array of nested integer arrays (See utility class ArrayUtil & ArrayUtilTest
+* coding: The news articles spring-boot app
+
 ## Some notes on implementation:
 
 * build using maven 3.3.9 and higher
@@ -23,3 +28,4 @@ The actual API documentation can be found here!
 * The app has no access control or security features / personalized user behaviour
 * The data structure is kept very simple and document oriented
 * There is no form of caching activated - which would be essential for high traffic to deal with
+* For actual deployment, settings for mongodb have to be changed

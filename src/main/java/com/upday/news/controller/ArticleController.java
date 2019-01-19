@@ -157,6 +157,14 @@ public class ArticleController {
                 HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * An ExceptionHandler for this controller. All ArticleNotFoundException will return a simplified
+     * ErrorDetails message. HTTP status code is 404 - Not found.
+     *
+     * @param ex      the thrown Exception
+     * @param request information on the original request
+     * @return ErrorDetails as json String
+     */
     @ExceptionHandler(ArticleNotFoundException.class)
     public ResponseEntity<ErrorDetails> handleArticleNotFoundException(ArticleNotFoundException ex, WebRequest request) {
 
