@@ -9,6 +9,8 @@ import javax.validation.constraints.NotNull;
  */
 public class ArrayUtil {
 
+    private ArrayUtil() {}
+
     /**
      * This method will "flatten" an array of integers and nested arrays of integers into an array of integers
      * only. (E.g. [[1,2,[3]],4] -> [1,2,3,4]). Note that elements which are not of type Integer of List are ignored.
