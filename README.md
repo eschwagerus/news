@@ -29,3 +29,6 @@ The actual API documentation can be found here!
 * The data structure is kept very simple and document oriented
 * There is no form of caching activated - which would be essential for high traffic to deal with
 * For actual deployment, settings for mongodb have to be changed
+* As the jacoco report shows, not all Error- cases have been tested. This was left out because I
+  think the existing tests show easily how I would do it
+* Sonar integration to track status of clean code is not included
