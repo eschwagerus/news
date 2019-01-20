@@ -27,7 +27,8 @@ public class ArrayUtilTest {
         log.debug(testArray.toString());
 
         // test
-        List<Object> result = ArrayUtil.flattenArray(testArray, new ArrayList<>());
+        List<Integer> result = new ArrayList<>();
+        ArrayUtil.flattenArray(testArray, result);
         log.debug(result.toString());
 
         // verify
@@ -40,7 +41,8 @@ public class ArrayUtilTest {
         // prepare
 
         // test
-        List<Object> result = ArrayUtil.flattenArray(new ArrayList<>(), new ArrayList<>());
+        List<Integer> result = new ArrayList<>();
+        ArrayUtil.flattenArray(new ArrayList<>(), result);
 
         // verify
         Assert.assertEquals(0, result.size());
@@ -58,7 +60,8 @@ public class ArrayUtilTest {
                         "Not an Integer!");
 
         // test
-        List<Object> result = ArrayUtil.flattenArray(testArray, new ArrayList<>());
+        List<Integer> result = new ArrayList<>();
+        ArrayUtil.flattenArray(testArray, result);
 
         // verify
         Assert.assertEquals(Arrays.asList(1, 2, 3, 4), result);

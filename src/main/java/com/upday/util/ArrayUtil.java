@@ -9,7 +9,8 @@ import javax.validation.constraints.NotNull;
  */
 public class ArrayUtil {
 
-    private ArrayUtil() {}
+    private ArrayUtil() {
+    }
 
     /**
      * This method will "flatten" an array of integers and nested arrays of integers into an array of integers
@@ -17,9 +18,8 @@ public class ArrayUtil {
      *
      * @param originalArray the array to flatten
      * @param resultArray   the array to which results are added
-     * @return the flattened array
      */
-    public static List<Object> flattenArray(@NotNull List<Object> originalArray, @NotNull List<Object> resultArray) {
+    public static void flattenArray(@NotNull List<Object> originalArray, @NotNull List<Integer> resultArray) {
 
         originalArray.forEach(element -> {
 
@@ -28,10 +28,9 @@ public class ArrayUtil {
                 flattenArray((List<Object>) element, resultArray);
             } else if (element instanceof Integer) {
                 // add to result list -> end of recursion
-                resultArray.add(element);
+                resultArray.add((Integer) element);
             }
         });
-        return resultArray;
     }
 
 }
