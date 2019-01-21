@@ -82,7 +82,7 @@ public class ArticleService {
 
         Optional<Article> articleById = articleRepository.findById(articleId);
         if (articleById.isPresent()) {
-            log.debug("Displaying article: %", articleById.get());
+            log.debug("Displaying article: %s", articleById.get());
             return articleById.get();
         } else {
             throw new ArticleNotFoundException("ArticleId not found in DB: " + articleId);
