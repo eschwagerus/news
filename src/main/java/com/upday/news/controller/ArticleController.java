@@ -15,9 +15,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,7 +61,7 @@ public class ArticleController {
             @ApiError(code = "400 - Bad Request", description = "The given article is incomplete or invalid. E.g. missing field."),
             @ApiError(code = "400 - Bad Request", description = "The given article json has a syntax error.")
     })
-    @PostMapping(value = "/update")
+    @PutMapping(value = "/update")
     public Article update(@RequestBody Article article) {
 
         log.debug("Updating existing article: {}", article);
@@ -70,7 +72,7 @@ public class ArticleController {
     @ApiErrors(apierrors = {
             @ApiError(code = "404 - Not Found", description = "The requested article was not found.")
     })
-    @PostMapping(value = "/delete")
+    @DeleteMapping(value = "/delete")
     public Article delete(@ApiQueryParam(description = "The id of the article to delete.", name = "articleId")
                           @RequestParam
                           String articleId) {

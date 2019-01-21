@@ -17,8 +17,10 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.upday.news.model.ArticleRepository;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -92,14 +94,14 @@ public class ArticleControllerIntegrationTest {
                 "}";
 
         mockMvc.perform(
-                post("/article/update")
+                put("/article/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(articleUpdate))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.header").value("header3333"));
 
         mockMvc.perform(
-                post("/article/delete")
+                delete("/article/delete")
                         .param("articleId", articleId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.header").value("header3333"));

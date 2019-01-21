@@ -18,10 +18,11 @@ This module implements the assigned backend tasks:
 * build the app:              mvn clean install
 * run the integration tests:  mvn clean verify
 * start springboot:           mvn spring-boot:run
+
+## Check reports:
+
 * generate jacoco report:     mvn jacoco:report             (see /target/site/jacoco/...)
 * generate surefire-report:   mvn surefire-report:report
-
-// with sonar locally installed:
 * mvn sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.login=2df9164fb22312cc640034732ea26327a9c58440
 
 When the app is started, open your browser at http://localhost:8080/jsondoc-ui.html?url=jsondoc
