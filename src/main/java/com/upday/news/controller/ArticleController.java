@@ -50,7 +50,7 @@ public class ArticleController {
     @PostMapping(value = "/create")
     public Article create(@RequestBody Article article) {
 
-        log.debug("Creating new article: %s", article);
+        log.debug("Creating new article: {}", article);
         return articleService.create(article);
     }
 
@@ -62,7 +62,7 @@ public class ArticleController {
     @PostMapping(value = "/update")
     public Article update(@RequestBody Article article) {
 
-        log.debug("Updating existing article: %s", article);
+        log.debug("Updating existing article: {}", article);
         return articleService.update(article);
     }
 
@@ -75,7 +75,7 @@ public class ArticleController {
                           @RequestParam
                           String articleId) {
 
-        log.debug("Deleting existing article: %s", articleId);
+        log.debug("Deleting existing article: {}", articleId);
         return articleService.delete(articleId);
     }
 
@@ -88,7 +88,7 @@ public class ArticleController {
                            @RequestParam
                            String articleId) {
 
-        log.debug("Displaying article with id: %s", articleId);
+        log.debug("Displaying article with id: {}", articleId);
         return articleService.findById(articleId);
     }
 
@@ -98,7 +98,7 @@ public class ArticleController {
                                        @RequestParam
                                        String author) {
 
-        log.debug("Listing articles for author %s", author);
+        log.debug("Listing articles for author {}", author);
         return articleService.findByAuthor(author);
     }
 

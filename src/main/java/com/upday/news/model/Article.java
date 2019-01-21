@@ -15,12 +15,10 @@ import lombok.ToString;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * The main data structure of an article.
  */
-@Document
 @Getter
 @Setter
 @EqualsAndHashCode
