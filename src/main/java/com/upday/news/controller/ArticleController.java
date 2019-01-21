@@ -18,10 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
@@ -49,7 +48,7 @@ public class ArticleController {
             @ApiError(code = "400 - Bad Request", description = "The given article is incomplete or invalid. E.g. missing field."),
             @ApiError(code = "400 - Bad Request", description = "The given article json has a syntax error.")
     })
-    @PostMapping(value = "/create")
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
     public Article create(@RequestBody Article article) {
 
         log.debug("Creating new article: {}", article);
@@ -61,7 +60,7 @@ public class ArticleController {
             @ApiError(code = "400 - Bad Request", description = "The given article is incomplete or invalid. E.g. missing field."),
             @ApiError(code = "400 - Bad Request", description = "The given article json has a syntax error.")
     })
-    @PutMapping(value = "/update")
+    @RequestMapping(value = "/update", method = RequestMethod.PUT)
     public Article update(@RequestBody Article article) {
 
         log.debug("Updating existing article: {}", article);
