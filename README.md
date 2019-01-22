@@ -1,4 +1,4 @@
-# Upday Java Backend Assignment (news/articles)
+# Java Backend Assignment (news/articles)
 
 This module implements the assigned backend tasks:
 
@@ -95,5 +95,5 @@ requirements of the application were to change? Are there some unit and some int
 tests?
 * We're not looking for full coverage (given time constraint) but just trying to get a feel for your
 testing skills.
- *Technical choices: do choices of libraries, databases, architecture etc. seem appropriate for
+* Technical choices: do choices of libraries, databases, architecture etc. seem appropriate for
 the chosen application?
